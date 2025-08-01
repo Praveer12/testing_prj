@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .api-url {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>E-commerce API Tester</h1>
+    
+    <div class="container">
+        <h2>API Base URL Configuration</h2>
+        <div class="form-group">
+            <label for="baseUrl">API Base URL:</label>
+            <input type="text" id="baseUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Categories Section -->
+        <div class="container">
+            <h2>Categories</h2>
+            
+            <!-- Get All Categories -->
+            <div class="api-url">GET /store/list</div>
+            <button onclick="getAllCategories()">Get All Categories</button>
+            <div id="getAllCategoriesResponse" class="response" style="display: none;"></div>
+            
+            <!-- Get Category by ID -->
+            <div class="api-url">GET /store/category/{id}</div>
+            <div class="form-group">
+                <input type="number" id="getCategoryId" placeholder="Category ID">
+                <button onclick="getCategoryById()">Get Category by ID</button>
+            </div>
+            <div id="getCategoryByIdResponse" class="response" style="display: none;"></div>
+            
+            <!-- Create Category -->
+            <div class="api-url">POST /store/category</div>
+            <div class="form-group">
+                <label for="newCategoryName">Category Name:</label>
+                <input type="text" id="newCategoryName" placeholder="Electronics, Clothing, etc.">
+                <button onclick="createCategory()">Create Category</button>
+            </div>
+            <div id="createCategoryResponse" class="response" style="display: none;"></div>
+            
+            <!-- Update Category -->
+            <div class="api-url">PATCH /store/category/{id}</div>
+            <div class="form-group">
+                <input type="number" id="updateCategoryId" placeholder="Category ID">
+                <input type="text" id="updateCategoryName" placeholder="New Category Name">
+                <button onclick="updateCategory()">Update Category</button>
+            </div>
+            <div id="updateCategoryResponse" class="response" style="display: none;"></div>
+            
+            <!-- Delete Category -->
+            <div class="api-url">DELETE /store/category/{id}</div>
+            <div class="form-group">
+                <input type="number" id="deleteCategoryId" placeholder="Category ID">
+                <button class="delete-btn" onclick="deleteCategory()">Delete Category</button>
+            </div>
+            <div id="deleteCategoryResponse" class="response" style="display: none;"></div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="container">
+            <h2>Products</h2>
+            
+            <!-- Get All Products -->
+            <div class="api-url">GET /store/products</div>
+            <button onclick="getAllProducts()">Get All Products</button>
+            <div id="getAllProductsResponse" class="response" style="display: none;"></div>
+            
+            <!-- Get Product by ID -->
+            <div class="api-url">GET /store/products/{id}</div>
+            <div class="form-group">
+                <input type="number" id="getProductId" placeholder="Product ID">
+                <button onclick="getProductById()">Get Product by ID</button>
+            </div>
+            <div id="getProductByIdResponse" class="response" style="display: none;"></div>
+            
+            <!-- Create Product -->
+            <div class="api-url">POST /store/products</div>
+            <div class="form-group">
+                <label for="newProductName">Product Name:</label>
+                <input type="text" id="newProductName" placeholder="iPhone 15, T-Shirt, etc.">
+                
+                <label for="newProductPrice">Price:</label>
+                <input type="number" id="newProductPrice" step="0.01" placeholder="99.99">
+                
+                <label for="newProductDescription">Description:</label>
+                <textarea id="newProductDescription" placeholder="Product description"></textarea>
+                
+                <label for="newProductCategoryId">Category ID:</label>
+                <input type="number" id="newProductCategoryId" placeholder="1">
+                
+                <button onclick="createProduct()">Create Product</button>
+            </div>
+            <div id="createProductResponse" class="response" style="display: none;"></div>
+            
+            <!-- Update Product -->
+            <div class="api-url">PATCH /store/products/{id}</div>
+            <div class="form-group">
+                <input type="number" id="updateProductId" placeholder="Product ID">
+                <input type="text" id="updateProductName" placeholder="Product Name">
+                <input type="number" id="updateProductPrice" step="0.01" placeholder="Price">
+                <textarea id="updateProductDescription" placeholder="Description"></textarea>
+                <input type="number" id="updateProductCategoryId" placeholder="Category ID">
+                <button onclick="updateProduct()">Update Product</button>
+            </div>
+            <div id="updateProductResponse" class="response" style="display: none;"></div>
+            
+            <!-- Delete Product -->
+            <div class="api-url">DELETE /store/products/{id}</div>
+            <div class="form-group">
+                <input type="number" id="deleteProductId" placeholder="Product ID">
+                <button class="delete-btn" onclick="deleteProduct()">Delete Product</button>
+            </div>
+            <div id="deleteProductResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function getBaseUrl() {
+            return document.getElementById('baseUrl').value || 'http://localhost:8000';
+        }
+
+        function displayResponse(elementId, data, status = 200) {
+            const element = document.getElementById(elementId);
+            element.textContent = `Status: ${status}\n\n${JSON.stringify(data, null, 2)}`;
+            element.style.display = 'block';
+        }
+
+        function displayError(elementId, error) {
+            const element = document.getElementById(elementId);
+            element.textContent = `Error: ${error.message || error}`;
+            element.style.display = 'block';
+        }
+
+        // Category Functions
+        async function getAllCategories() {
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/list`);
+                const data = await response.json();
+                displayResponse('getAllCategoriesResponse', data, response.status);
+            } catch (error) {
+                displayError('getAllCategoriesResponse', error);
+            }
+        }
+
+        async function getCategoryById() {
+            const id = document.getElementById('getCategoryId').value;
+            if (!id) {
+                alert('Please enter a category ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/category/${id}`);
+                const data = await response.json();
+                displayResponse('getCategoryByIdResponse', data, response.status);
+            } catch (error) {
+                displayError('getCategoryByIdResponse', error);
+            }
+        }
+
+        async function createCategory() {
+            const name = document.getElementById('newCategoryName').value;
+            if (!name) {
+                alert('Please enter a category name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/category`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ category: name })
+                });
+                const data = await response.json();
+                displayResponse('createCategoryResponse', data, response.status);
+                document.getElementById('newCategoryName').value = '';
+            } catch (error) {
+                displayError('createCategoryResponse', error);
+            }
+        }
+
+        async function updateCategory() {
+            const id = document.getElementById('updateCategoryId').value;
+            const name = document.getElementById('updateCategoryName').value;
+            
+            if (!id || !name) {
+                alert('Please enter both category ID and new name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/category/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ category: name })
+                });
+                const data = await response.json();
+                displayResponse('updateCategoryResponse', data, response.status);
+                document.getElementById('updateCategoryId').value = '';
+                document.getElementById('updateCategoryName').value = '';
+            } catch (error) {
+                displayError('updateCategoryResponse', error);
+            }
+        }
+
+        async function deleteCategory() {
+            const id = document.getElementById('deleteCategoryId').value;
+            if (!id) {
+                alert('Please enter a category ID');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this category?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/category/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                displayResponse('deleteCategoryResponse', data, response.status);
+                document.getElementById('deleteCategoryId').value = '';
+            } catch (error) {
+                displayError('deleteCategoryResponse', error);
+            }
+        }
+
+        // Product Functions
+        async function getAllProducts() {
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/products`);
+                const data = await response.json();
+                displayResponse('getAllProductsResponse', data, response.status);
+            } catch (error) {
+                displayError('getAllProductsResponse', error);
+            }
+        }
+
+        async function getProductById() {
+            const id = document.getElementById('getProductId').value;
+            if (!id) {
+                alert('Please enter a product ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/products/${id}`);
+                const data = await response.json();
+                displayResponse('getProductByIdResponse', data, response.status);
+            } catch (error) {
+                displayError('getProductByIdResponse', error);
+            }
+        }
+
+        async function createProduct() {
+            const product = document.getElementById('newProductName').value;
+            const price = parseFloat(document.getElementById('newProductPrice').value);
+            const description = document.getElementById('newProductDescription').value;
+            const category_id = parseInt(document.getElementById('newProductCategoryId').value);
+            
+            if (!product || !price || !description || !category_id) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product,
+                        price,
+                        description,
+                        category_id
+                    })
+                });
+                const data = await response.json();
+                displayResponse('createProductResponse', data, response.status);
+                
+                // Clear form
+                document.getElementById('newProductName').value = '';
+                document.getElementById('newProductPrice').value = '';
+                document.getElementById('newProductDescription').value = '';
+                document.getElementById('newProductCategoryId').value = '';
+            } catch (error) {
+                displayError('createProductResponse', error);
+            }
+        }
+
+        async function updateProduct() {
+            const id = document.getElementById('updateProductId').value;
+            const product = document.getElementById('updateProductName').value;
+            const price = document.getElementById('updateProductPrice').value;
+            const description = document.getElementById('updateProductDescription').value;
+            const category_id = document.getElementById('updateProductCategoryId').value;
+            
+            if (!id) {
+                alert('Please enter a product ID');
+                return;
+            }
+            
+            const updateData = {};
+            if (product) updateData.product = product;
+            if (price) updateData.price = parseFloat(price);
+            if (description) updateData.description = description;
+            if (category_id) updateData.category_id = parseInt(category_id);
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/products/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                const data = await response.json();
+                displayResponse('updateProductResponse', data, response.status);
+                
+                // Clear form
+                document.getElementById('updateProductId').value = '';
+                document.getElementById('updateProductName').value = '';
+                document.getElementById('updateProductPrice').value = '';
+                document.getElementById('updateProductDescription').value = '';
+                document.getElementById('updateProductCategoryId').value = '';
+            } catch (error) {
+                displayError('updateProductResponse', error);
+            }
+        }
+
+        async function deleteProduct() {
+            const id = document.getElementById('deleteProductId').value;
+            if (!id) {
+                alert('Please enter a product ID');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${getBaseUrl()}/store/products/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                displayResponse('deleteProductResponse', data, response.status);
+                document.getElementById('deleteProductId').value = '';
+            } catch (error) {
+                displayError('deleteProductResponse', error);
+            }
+        }
+    </script>
+</body>
+</html>
